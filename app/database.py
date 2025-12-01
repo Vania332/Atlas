@@ -1,10 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy import sessionmaker, declarative_base
+from config import Settings
 
-
-SQLALCHEMY_DATABASE_URL = "postgresql://user:1234@localhost:5432/crm_db"
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(
+    url=Settings.DATABASE_URL_pcycopg,
+    echo=True,
+    pool_size=5,
+    max_overflow=10,
+    )
 
 SessionLocate = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
