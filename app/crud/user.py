@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.user import User
-from schemas.user import UserCreate
+from app.models.deal import User
+from app.schemas.deal import UserCreate
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -22,4 +22,3 @@ def create_user(db: Session, user_create: UserCreate):
     db.commit()
     db.refresh(user)
     return user
-    
