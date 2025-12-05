@@ -1,14 +1,26 @@
 from sqlalchemy import create_engine
-from sqlalchemy import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from config import Settings
 
+
+settings = Settings()
+
 engine = create_engine(
-    url=Settings.DATABASE_URL_pcycopg,
+    url=settings.DATABASE_URL_mysql,
     echo=True,
     pool_size=5,
     max_overflow=10,
-    )
+)
 
 SessionLocate = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base
+class Base(DeclarativeBase):
+    pass
+
+
+def get_db():
+    db = SessionLocate()
+    try:
+        yield db
+    finally:
+        db.close()
