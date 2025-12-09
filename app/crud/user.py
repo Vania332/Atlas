@@ -15,6 +15,9 @@ def get_user(db: Session, user_id: int):
 def get_users(db: Session):
     return db.query(User).all()
 
+def get_user_by_email(db: Session, user_email: str):
+    return db.query(User).filter(User.email == user_email).first()
+
 # ============= CREATE =============
 def create_user(db: Session, user_create: UserCreate):
     hashed_password = get_password_hash(user_create.password)

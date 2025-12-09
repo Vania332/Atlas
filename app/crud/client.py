@@ -9,6 +9,9 @@ def get_client(db: Session, client_id: int):
 def get_clients(db: Session):
     return db.query(Client).all()
 
+def get_client_by_email(db: Session, client_email: str):
+    return db.query(Client).filter(Client.email == client_email).first()
+
 # ============= CREATE =============
 def create_client(db: Session, client_create: ClientCreate):
     client = Client(

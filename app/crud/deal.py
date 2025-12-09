@@ -10,6 +10,9 @@ def get_deal(db: Session, deal_id: int):
 def get_deals(db: Session):
     return db.query(Deal).all()
 
+def get_deal_by_title_and_client(db: Session, deal_title: str, deal_client_id: int):
+    return db.query(Deal).filter(Deal.title == deal_title, Deal.client_id == deal_client_id).first()
+
 # ============= CREATE =============
 def create_deal(db: Session, deal_create: DealCreate):
     deal = Deal(
