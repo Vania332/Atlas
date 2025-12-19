@@ -35,5 +35,3 @@ app.include_router(client.router)
 app.include_router(deal.router)
 
 #http://127.0.0.1:8000/static/index.html 
-
-#

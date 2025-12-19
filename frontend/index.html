@@ -1,114 +1,208 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>FastAPI Frontend</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Frontend — Без валидации</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    h2 { margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+    .endpoint { background: #f9f9f9; padding: 15px; margin: 10px 0; border-radius: 4px; }
+    input, button, select { padding: 6px; margin: 4px; }
+    pre { background: #eee; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    .response { margin-top: 8px; min-height: 24px; }
+  </style>
 </head>
 <body>
-  <h1>FastAPI CRUD Frontend</h1>
+  <h1>Frontend для FastAPI </h1>
+  <p>только в бэкенд.</p>
 
-  <div class="tabs">
-    <button class="tab-button active" data-tab="clients">Clients</button>
-    <button class="tab-button" data-tab="deals">Deals</button>
-    <button class="tab-button" data-tab="users">Users</button>
+  <!-- USERS -->
+  <h2>👤 Users</h2>
+
+  <div class="endpoint">
+    <h3>GET /users</h3>
+    <button onclick="fetchData('/users', 'GET', null, 'users-list')">Получить всех пользователей</button>
+    <div class="response" id="users-list"></div>
   </div>
 
-  <!-- Clients Tab -->
-  <div class="tab-content active" id="clients-tab">
-    <h2>Clients</h2>
-    <table id="clients-table">
-      <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <form id="create-client-form">
-      <h3>Add Client</h3>
-      <input type="text" name="name" placeholder="Name" required>
-      <input type="text" name="phone" placeholder="Phone" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <button type="submit">Add Client</button>
-    </form>
-    <div id="update-client-form-container" style="display:none;">
-      <h3>Update Client</h3>
-      <form id="update-client-form">
-        <input type="hidden" name="id">
-        <input type="text" name="name" placeholder="Name">
-        <input type="text" name="phone" placeholder="Phone">
-        <input type="email" name="email" placeholder="Email">
-        <button type="submit">Update Client</button>
-        <button type="button" id="cancel-update-client">Cancel</button>
-      </form>
-    </div>
+  <div class="endpoint">
+    <h3>POST /users</h3>
+    <input placeholder="email" id="user-email" />
+    <input placeholder="name" id="user-name" />
+    <input placeholder="password" id="user-password" />
+    <button onclick="postData('/users', {email: getValue('user-email'), name: getValue('user-name'), password: getValue('user-password')}, 'users-create')">Создать пользователя</button>
+    <div class="response" id="users-create"></div>
   </div>
 
-  <!-- Deals Tab -->
-  <div class="tab-content" id="deals-tab">
-    <h2>Deals</h2>
-    <table id="deals-table">
-      <thead>
-        <tr>
-          <th>ID</th><th>Title</th><th>Amount</th><th>Status</th><th>Client ID</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <form id="create-deal-form">
-      <h3>Add Deal</h3>
-      <input type="text" name="title" placeholder="Title" required>
-      <input type="number" name="amount" placeholder="Amount" required>
-      <input type="text" name="status" placeholder="Status" required>
-      <input type="number" name="client_id" placeholder="Client ID" required>
-      <button type="submit">Add Deal</button>
-    </form>
-    <div id="update-deal-form-container" style="display:none;">
-      <h3>Update Deal</h3>
-      <form id="update-deal-form">
-        <input type="hidden" name="id">
-        <input type="text" name="title" placeholder="Title">
-        <input type="number" name="amount" placeholder="Amount">
-        <input type="text" name="status" placeholder="Status">
-        <input type="number" name="client_id" placeholder="Client ID">
-        <button type="submit">Update Deal</button>
-        <button type="button" id="cancel-update-deal">Cancel</button>
-      </form>
-    </div>
+  <div class="endpoint">
+    <h3>GET /users/{id}</h3>
+    <input placeholder="ID" id="user-get-id" style="width:80px" />
+    <button onclick="fetchData('/users/' + getValue('user-get-id'), 'GET', null, 'user-get')">Получить по ID</button>
+    <div class="response" id="user-get"></div>
   </div>
 
-  <!-- Users Tab -->
-  <div class="tab-content" id="users-tab">
-    <h2>Users</h2>
-    <table id="users-table">
-      <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>Email</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <form id="create-user-form">
-      <h3>Add User</h3>
-      <input type="text" name="name" placeholder="Name" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <button type="submit">Add User</button>
-    </form>
-    <div id="update-user-form-container" style="display:none;">
-      <h3>Update User</h3>
-      <form id="update-user-form">
-        <input type="hidden" name="id">
-        <input type="text" name="name" placeholder="Name">
-        <input type="email" name="email" placeholder="Email">
-        <input type="password" name="password" placeholder="New Password (optional)">
-        <button type="submit">Update User</button>
-        <button type="button" id="cancel-update-user">Cancel</button>
-      </form>
-    </div>
+  <div class="endpoint">
+    <h3>PUT /users/{id}</h3>
+    <input placeholder="ID" id="user-update-id" style="width:80px" />
+    <input placeholder="email (опционально)" id="user-update-email" />
+    <input placeholder="name (опционально)" id="user-update-name" />
+    <input placeholder="password (опционально)" id="user-update-password" />
+    <button onclick="updateUser()">Обновить пользователя</button>
+    <div class="response" id="user-update"></div>
   </div>
 
-  <script src="skript.js"></script>
+  <div class="endpoint">
+    <h3>DELETE /users/{id}</h3>
+    <input placeholder="ID" id="user-delete-id" style="width:80px" />
+    <button onclick="fetchData('/users/' + getValue('user-delete-id'), 'DELETE', null, 'user-delete')">Удалить пользователя</button>
+    <div class="response" id="user-delete"></div>
+  </div>
+
+  <!-- CLIENTS -->
+  <h2>👤 Clients</h2>
+
+  <div class="endpoint">
+    <h3>GET /clients</h3>
+    <button onclick="fetchData('/clients', 'GET', null, 'clients-list')">Получить всех клиентов</button>
+    <div class="response" id="clients-list"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>POST /clients</h3>
+    <input placeholder="name" id="client-name" />
+    <input placeholder="phone" id="client-phone" />
+    <input placeholder="email" id="client-email" />
+    <button onclick="postData('/clients', {name: getValue('client-name'), phone: getValue('client-phone'), email: getValue('client-email')}, 'clients-create')">Создать клиента</button>
+    <div class="response" id="clients-create"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>GET /clients/{id}</h3>
+    <input placeholder="ID" id="client-get-id" style="width:80px" />
+    <button onclick="fetchData('/clients/' + getValue('client-get-id'), 'GET', null, 'client-get')">Получить по ID</button>
+    <div class="response" id="client-get"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>PUT /clients/{id}</h3>
+    <input placeholder="ID" id="client-update-id" style="width:80px" />
+    <input placeholder="name (опционально)" id="client-update-name" />
+    <input placeholder="phone (опционально)" id="client-update-phone" />
+    <input placeholder="email (опционально)" id="client-update-email" />
+    <button onclick="updateClient()">Обновить клиента</button>
+    <div class="response" id="client-update"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>DELETE /clients/{id}</h3>
+    <input placeholder="ID" id="client-delete-id" style="width:80px" />
+    <button onclick="fetchData('/clients/' + getValue('client-delete-id'), 'DELETE', null, 'client-delete')">Удалить клиента</button>
+    <div class="response" id="client-delete"></div>
+  </div>
+
+  <!-- DEALS -->
+  <h2>💼 Deals</h2>
+
+  <div class="endpoint">
+    <h3>GET /deals</h3>
+    <button onclick="fetchData('/deals', 'GET', null, 'deals-list')">Получить все сделки</button>
+    <div class="response" id="deals-list"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>POST /deals</h3>
+    <input placeholder="title" id="deal-title" />
+    <input placeholder="amount (число)" id="deal-amount" />
+    <input placeholder="status" id="deal-status" />
+    <input placeholder="client_id (число)" id="deal-client-id" />
+    <button onclick="postData('/deals', {title: getValue('deal-title'), amount: parseInt(getValue('deal-amount')), status: getValue('deal-status'), client_id: parseInt(getValue('deal-client-id'))}, 'deals-create')">Создать сделку</button>
+    <div class="response" id="deals-create"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>GET /deals/{id}</h3>
+    <input placeholder="ID" id="deal-get-id" style="width:80px" />
+    <button onclick="fetchData('/deals/' + getValue('deal-get-id'), 'GET', null, 'deal-get')">Получить по ID</button>
+    <div class="response" id="deal-get"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>PUT /deals/{id}</h3>
+    <input placeholder="ID" id="deal-update-id" style="width:80px" />
+    <input placeholder="title (опционально)" id="deal-update-title" />
+    <input placeholder="amount (опционально, число)" id="deal-update-amount" />
+    <input placeholder="status (опционально)" id="deal-update-status" />
+    <input placeholder="client_id (опционально, число)" id="deal-update-client-id" />
+    <button onclick="updateDeal()">Обновить сделку</button>
+    <div class="response" id="deal-update"></div>
+  </div>
+
+  <div class="endpoint">
+    <h3>DELETE /deals/{id}</h3>
+    <input placeholder="ID" id="deal-delete-id" style="width:80px" />
+    <button onclick="fetchData('/deals/' + getValue('deal-delete-id'), 'DELETE', null, 'deal-delete')">Удалить сделку</button>
+    <div class="response" id="deal-delete"></div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:8000'; // полный URL для API
+
+    function getValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function showResponse(elementId, data, isError = false) {
+      const el = document.getElementById(elementId);
+      el.innerHTML = `<pre style="color:${isError ? 'red' : 'black'}">${JSON.stringify(data, null, 2)}</pre>`;
+    }
+
+    async function fetchData(url, method, body, elementId) {
+      try {
+        const opts = { method };
+        if (body) {
+          opts.headers = { 'Content-Type': 'application/json' };
+          opts.body = JSON.stringify(body);
+        }
+        const res = await fetch(API_BASE + url, opts);
+        const data = await res.json();
+        showResponse(elementId, data);
+      } catch (err) {
+        showResponse(elementId, { error: err.message }, true);
+      }
+    }
+
+    function postData(url, data, elementId) {
+      fetchData(url, 'POST', data, elementId);
+    }
+
+    function updateUser() {
+      const id = getValue('user-update-id');
+      const updateData = {};
+      if (getValue('user-update-email')) updateData.email = getValue('user-update-email');
+      if (getValue('user-update-name')) updateData.name = getValue('user-update-name');
+      if (getValue('user-update-password')) updateData.password = getValue('user-update-password');
+      fetchData(`/users/${id}`, 'PUT', updateData, 'user-update');
+    }
+
+    function updateClient() {
+      const id = getValue('client-update-id');
+      const updateData = {};
+      if (getValue('client-update-name')) updateData.name = getValue('client-update-name');
+      if (getValue('client-update-phone')) updateData.phone = getValue('client-update-phone');
+      if (getValue('client-update-email')) updateData.email = getValue('client-update-email');
+      fetchData(`/clients/${id}`, 'PUT', updateData, 'client-update');
+    }
+
+    function updateDeal() {
+      const id = getValue('deal-update-id');
+      const updateData = {};
+      if (getValue('deal-update-title')) updateData.title = getValue('deal-update-title');
+      if (getValue('deal-update-amount')) updateData.amount = parseInt(getValue('deal-update-amount'));
+      if (getValue('deal-update-status')) updateData.status = getValue('deal-update-status');
+      if (getValue('deal-update-client-id')) updateData.client_id = parseInt(getValue('deal-update-client-id'));
+      fetchData(`/deals/${id}`, 'PUT', updateData, 'deal-update');
+    }
+  </script>
 </body>
 </html>

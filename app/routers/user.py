@@ -30,10 +30,17 @@ def create_user(user_create: UserCreate, db: Session = Depends(get_db)):
 @router.put("/{user_id}", response_model=UserOut)
 def update_user(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)):
     updated = crud_user.update_user(db, user_id, payload)
-       # определять что такие же поля используют другие юзеры raise HTTPException(status_code=400, detail="User already registred")
+       # добавить определение что такие же поля используют другие юзеры raise HTTPException(status_code=400, detail="User already registred")
     if not updated:
         raise HTTPException(status_code=404, detail="User is not found")
     return updated
+
+@router.patch("/{user_id}", response_model=UserOut)
+def update_user_field(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)):
+    updated_fields = crud_user.patch_user(db, user_id, payload)
+    if not updated_fields:
+        raise HTTPException(status_code=404, detail="User is not found")
+    return updated_fields
 
 @router.delete("/{user_id}", response_model=UserOut)
 def delete_user(user_id: int, db: Session = Depends(get_db)):

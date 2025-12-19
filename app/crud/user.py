@@ -33,6 +33,22 @@ def create_user(db: Session, user_create: UserCreate):
     db.refresh(user)
     return user
 
+# =========== Update(putch) ========
+def patch_user(db: Session, user_id: int, update_data: UserUpdate):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        return None
+    
+    update_dict = update_data.model_dump(exclude_unset=True)
+    
+    for field, value in update_dict.items():
+        if hasattr(user, field):
+            setattr(user, field, value)
+    
+    db.commit()
+    db.refresh(user)
+    return user
+
 # ============= UPDATE =============
 def update_user(db: Session, user_id: int, user_update: UserUpdate):
     user = get_user(db, user_id)
